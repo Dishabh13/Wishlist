@@ -4,10 +4,21 @@ import { EmptyState } from "@/components/EmptyState";
 import { useWishlist } from "@/hooks/useWishlist";
 
 const Index = () => {
-  const { wishes, addWish, toggleWish, deleteWish } = useWishlist();
+  const { wishes, isLoading, addWish, toggleWish, deleteWish } = useWishlist();
 
-  const pendingWishes = wishes.filter((wish) => !wish.isDone);
-  const completedWishes = wishes.filter((wish) => wish.isDone);
+  const pendingWishes = wishes.filter((wish) => !wish.is_done);
+  const completedWishes = wishes.filter((wish) => wish.is_done);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[var(--gradient-subtle)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your wishes...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--gradient-subtle)] py-8 px-4 sm:px-6 lg:px-8">
@@ -43,7 +54,11 @@ const Index = () => {
                     {pendingWishes.map((wish) => (
                       <WishCard
                         key={wish.id}
-                        {...wish}
+                        id={wish.id}
+                        itemName={wish.item_name}
+                        reason={wish.reason}
+                        timestamp={wish.timestamp}
+                        isDone={wish.is_done}
                         onToggle={toggleWish}
                         onDelete={deleteWish}
                       />
@@ -64,7 +79,11 @@ const Index = () => {
                     {completedWishes.map((wish) => (
                       <WishCard
                         key={wish.id}
-                        {...wish}
+                        id={wish.id}
+                        itemName={wish.item_name}
+                        reason={wish.reason}
+                        timestamp={wish.timestamp}
+                        isDone={wish.is_done}
                         onToggle={toggleWish}
                         onDelete={deleteWish}
                       />

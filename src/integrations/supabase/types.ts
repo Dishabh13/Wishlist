@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      wishes: {
+        Row: {
+          created_at: string
+          id: string
+          is_done: boolean
+          item_name: string
+          reason: string
+          timestamp: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_done?: boolean
+          item_name: string
+          reason: string
+          timestamp?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_done?: boolean
+          item_name?: string
+          reason?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
