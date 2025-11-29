@@ -1,7 +1,7 @@
 export interface Wish {
   id: string;
-  itemName: string;
+  item_name: string;
   reason: string;
   timestamp: string;
-  isDone: boolean;
+  is_done: boolean;
 }

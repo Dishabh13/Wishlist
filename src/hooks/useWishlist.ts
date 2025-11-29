@@ -1,58 +1,96 @@
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Wish } from "@/types/wish";
-
-const STORAGE_KEY = "wishlist-data";
+import { toast } from "sonner";
 
 export const useWishlist = () => {
   const [wishes, setWishes] = useState<Wish[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load wishes from localStorage on mount
-  useEffect(() => {
+  // Fetch wishes from Supabase
+  const fetchWishes = async () => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setWishes(parsed);
-      }
+      const { data, error } = await supabase
+        .from("wishes")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setWishes(data || []);
     } catch (error) {
-      console.error("Failed to load wishes from localStorage:", error);
+      console.error("Error fetching wishes:", error);
+      toast.error("Failed to load wishes");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  // Load wishes on mount
+  useEffect(() => {
+    fetchWishes();
   }, []);
 
-  // Save wishes to localStorage whenever they change
-  useEffect(() => {
+  const addWish = async (itemName: string, reason: string) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(wishes));
+      const { data, error } = await supabase
+        .from("wishes")
+        .insert({
+          item_name: itemName,
+          reason: reason,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setWishes((prev) => [data, ...prev]);
+      toast.success("Wish added successfully!");
     } catch (error) {
-      console.error("Failed to save wishes to localStorage:", error);
+      console.error("Error adding wish:", error);
+      toast.error("Failed to add wish");
     }
-  }, [wishes]);
-
-  const addWish = (itemName: string, reason: string) => {
-    const newWish: Wish = {
-      id: crypto.randomUUID(),
-      itemName,
-      reason,
-      timestamp: new Date().toISOString(),
-      isDone: false,
-    };
-    setWishes((prev) => [newWish, ...prev]);
   };
 
-  const toggleWish = (id: string) => {
-    setWishes((prev) =>
-      prev.map((wish) =>
-        wish.id === id ? { ...wish, isDone: !wish.isDone } : wish
-      )
-    );
+  const toggleWish = async (id: string) => {
+    try {
+      const wish = wishes.find((w) => w.id === id);
+      if (!wish) return;
+
+      const { error } = await supabase
+        .from("wishes")
+        .update({ is_done: !wish.is_done })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setWishes((prev) =>
+        prev.map((w) => (w.id === id ? { ...w, is_done: !w.is_done } : w))
+      );
+      toast.success(wish.is_done ? "Marked as pending" : "Marked as done");
+    } catch (error) {
+      console.error("Error toggling wish:", error);
+      toast.error("Failed to update wish");
+    }
   };
 
-  const deleteWish = (id: string) => {
-    setWishes((prev) => prev.filter((wish) => wish.id !== id));
+  const deleteWish = async (id: string) => {
+    try {
+      const { error } = await supabase.from("wishes").delete().eq("id", id);
+
+      if (error) throw error;
+
+      setWishes((prev) => prev.filter((w) => w.id !== id));
+      toast.success("Wish deleted");
+    } catch (error) {
+      console.error("Error deleting wish:", error);
+      toast.error("Failed to delete wish");
+    }
   };
 
   return {
     wishes,
+    isLoading,
     addWish,
     toggleWish,
     deleteWish,
