@@ -1,73 +1,167 @@
-# Welcome to your Lovable project
+Simple Wishlist App ✨
 
-## Project info
+A clean, minimal, accessible wishlist tracking web app built using React, Vite, Tailwind CSS, and Supabase/localStorage for data persistence.
 
-**URL**: https://lovable.dev/projects/124ac2c3-7788-44bc-8b84-fce3d2b6f65c
+✨ Features
 
-## How can I edit this code?
+Minimal Modern UI: Soft colors, rounded cards, clean spacing
 
-There are several ways of editing your application.
+Frontend Powered: Built using React + Vite with Tailwind styling
 
-**Use Lovable**
+Optional Backend: Uses Supabase OR localStorage for wishlist persistence
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/124ac2c3-7788-44bc-8b84-fce3d2b6f65c) and start prompting.
+Accessible: Fully keyboard-friendly, ARIA-labeled inputs, focus styles
 
-Changes made via Lovable will be committed automatically to this repo.
+Responsive: Mobile-first layout with smooth scaling
 
-**Use your preferred IDE**
+Interactive: Add, mark done/undo, delete wishes with instant UI updates
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+🚀 Quick Start
+Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Node.js (v18 or higher)
 
-Follow these steps:
+Optional: A Supabase account (if using Supabase backend)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+Installation
+1. Clone the repository
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Set up Supabase (Optional)
+
+If using Supabase instead of localStorage:
+
+Your wishlist table should include:
+
+id – UUID (primary key)
+
+item_name – text (required)
+
+reason – text (optional)
+
+is_done – boolean (default false)
+
+created_at – timestamp with timezone (default now())
+
+RLS Policies:
+Already handled by Lovable/Supabase templates:
+
+CREATE POLICY "Public can insert wishes"
+ON public.wishlist FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Public can view wishes"
+ON public.wishlist FOR SELECT USING (true);
+
+
+Environment Variables:
+
+VITE_SUPABASE_URL=<your-url>
+VITE_SUPABASE_ANON_KEY=<your-anon-key>
+
+4. Run the development server
 npm run dev
-```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Now open:
+👉 http://localhost:5173
+ (or whichever port Vite shows)
 
-**Use GitHub Codespaces**
+🏗️ Project Structure
+src/
+├── components/
+│   ├── WishForm.jsx          # Form for adding new wishes
+│   ├── WishCard.jsx          # Card UI for displaying each wish
+│   └── EmptyState.jsx        # Shown when no wishes exist
+├── lib/
+│   ├── localStorage.js       # Handles load/save to localStorage
+│   └── supabaseClient.js     # Only if using Supabase backend
+├── pages/
+│   └── App.jsx               # Main page layout (heading, form, wishlist)
+├── index.css                 # Tailwind + custom styles
+└── main.jsx                  # Root React entry
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+🎨 Design System
 
-## What technologies are used for this project?
+Your Simple Wishlist App uses a soft, modern UI:
 
-This project is built with:
+Colors
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Primary: Soft purple / plum
 
-## How can I deploy this project?
+Secondary: Light grey
 
-Simply open [Lovable](https://lovable.dev/projects/124ac2c3-7788-44bc-8b84-fce3d2b6f65c) and click on Share -> Publish.
+Background: White with subtle shadows
 
-## Can I connect a custom domain to my Lovable project?
+UI Elements
 
-Yes, you can!
+Rounded cards with smooth hover lift
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Animated buttons
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Clean, large input fields
+
+Success messages + instant UI feedback
+
+Micro-Interactions
+
+Button press scaling
+
+Card hover glow
+
+Smooth transitions for add / delete / toggle
+
+🔒 Security & Best Practices
+
+No credentials hardcoded (Supabase values stored in .env)
+
+Clean client-side validation (item name required)
+
+Debounced submit (prevents double-click spam)
+
+RLS policies applied if Supabase is used
+
+Semantic HTML + keyboard accessibility
+
+📝 Usage
+Add a Wish
+
+Enter What do you wish for? and the Reason → Click Add to Wishlist.
+
+Mark as Done
+
+Click the Done (or Undo) button on the wish card.
+
+Delete
+
+Click the Delete icon to permanently remove the wish.
+
+Persistence
+
+If Supabase is used → Data syncs online
+
+If localStorage is used → Wishes remain after refresh
+
+🚢 Deployment
+Option 1: Lovable Deployment (Recommended)
+
+Click the Publish button in Lovable UI.
+
+Option 2: Vercel Deployment
+npm run build
+vercel --prod
+
+Option 3: Netlify Deployment
+npm run build
+netlify deploy --prod --dir=dist
+
+🛠️ Development Commands
+npm run dev       # Start development server
+npm run build     # Build production files
+npm run preview   # Preview production build
+
+📌 Project Info:
+https://lovable.dev/projects/124ac2c3-7788-44bc-8b84-fce3d2b6f65c?magic_link=mc_369e34ce-d3a9-4162-8621-db462775ec74
